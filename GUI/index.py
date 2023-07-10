@@ -1,6 +1,7 @@
 import Connection
-from classes import Game
+import classes
 
-GameOne = Game(Connection.DB_URI)
 
-print(GameOne.addGame(1, 'Pubg', 2))
+user = classes.user(Connection.DB_URI)
+
+print(user.deleteUser(3))
