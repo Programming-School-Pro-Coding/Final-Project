@@ -1,5 +1,5 @@
 import sqlalchemy
-import sqlalchemy
+from sqlalchemy import select
 
 class Game:
     def __init__(self, Connection):
@@ -23,19 +23,22 @@ class Game:
         return result
     def GetGameUser(self, UserID):
         Games = []
-        query = self.userGame.select().where(self.userGame.c['UserID']==UserID)
+        query = self.userGame.select().where(self.userGame.c['UserID']==UserID).with_only_columns(self.userGame.c['GamID'])
 
         games = self.connection.execute(query).fetchall()
 
         for game in games:
-            query = self.game.select().where(self.game.c['GameID']==game[0])
+            query = self.game.select().where(self.game.c['GameID']==game)
             result = self.connection.execute(query).fetchall()
             Games.append(result[0])
 
         return Games
-    def addGame(self, GameID, GameName, ScoreID):
-        query = self.game.insert().values(GameID=GameID, GameName=GameName, ScoreID=ScoreID)
-        result = self.connection.execute(query)
+    def addGame(self, GameName, ScoreID):
+        query1=self.game.select()
+        don=self.connection.execute(query1).fetchall()
+        GameID = don[-1][0]+1
+        query2 = self.game.insert().values(GameID=GameID, GameName=GameName, ScoreID=ScoreID)
+        result = self.connection.execute(query2)
         
         self.connection.commit()
 
@@ -47,16 +50,18 @@ class user:
         self.meta= sqlalchemy.MetaData()
         self.meta.reflect(self.engine)
         self.connection= self.engine.connect()
+        self.user=self.meta.tables['user']
 
     def login(self,username,password):
-        query= self.meta.tables["user"].select().where(self.meta.tables["user"].c['userName']==username , self.meta.tables["user"].c['pass']==password)
+        query= self.meta.tables["user"].select().where(self.meta.tables["user"].c['userName']==username , self.meta.tables["user"].c['password']==password)
         result= self.connection.execute(query).fetchall()
         if (not result):
             return False
         else:
             return result
     def getAllUsers(self):
-        query= self.meta.tables["user"].select()
+        query= select(self.user.c.userID, self.user.c.userName, self.user.c.ScoreID)
+        # self.meta.tables["user"].select([self.meta.tables['user'].c.userID, self.meta.tables['user'].c.userName, self.meta.tables['user'].c.ScoreID])
         result= self.connection.execute(query).fetchall()
         return result
     def getUserById(self,id):
@@ -67,9 +72,12 @@ class user:
         query= self.meta.tables["user"].select().where(*filter)
         user= self.connection.execute(query).fetchall()
         return user
-    def register(self,userID, username, password, ScoreID):
-        query= self.meta.tables["user"].insert().values(userName=username,password=password,ScoreID=ScoreID,userID=userID)
-        done=self.connection.execute(query)
+    def register(self,username, password, ScoreID):
+        query1= self.meta.tables['user'].select()
+        don=self.connection.execute(query1).fetchall()
+        userID = don[-1][0]+1
+        query2= self.meta.tables["user"].insert().values(userName=username,password=password,ScoreID=ScoreID,userID=userID)
+        done=self.connection.execute(query2)
         self.connection.commit()
         if(done):
             print("User created")
@@ -109,7 +117,6 @@ class score:
 
         score = self.connection.execute(query2).fetchall()
 
-
         return {
             'ScoreID': score[0][0],
             'UserID': user[0][0]
@@ -121,8 +128,10 @@ class score:
 
         query2 = self.score.update().where(self.user.c['ScoreID']==score[0][0]).values(ScoreNum=0)
 
-        updatedScore = self.connection.execute(query2)
+        self.connection.execute(query2)
 
         self.connection.commit()
 
         return True
+
+
