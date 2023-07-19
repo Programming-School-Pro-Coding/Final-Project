@@ -25,7 +25,6 @@ def UpdateTable(TreeView, isUsers):
 
 def DeleteUser(tree):
     curItem = tree.focus()
-    # print(tree.item(curItem))
     item = tree.item(curItem)
     userID = item['values'][0]
     result = user1.deleteUser(userID)
@@ -50,11 +49,11 @@ def Login(username,password):
     if (result == False):
         appearMessage("Wrong username or password")
     else:
-        AdminPage.tkraise()
+        HomePage.tkraise()
 
 def register(username,password):
     user1.register(username.get(), password.get(), 3)
-    AdminPage.tkraise()
+    HomePage.tkraise()
     for item in TreeView_Admin.get_children():
         TreeView_Admin.delete(item)
     users = user1.getAllUsers()
@@ -73,7 +72,7 @@ def AddGame(gameName):
     
 
 win =tk.Tk()
-win.geometry("300x300")
+win.geometry("600x600")
 
 win.columnconfigure(0,weight=1)
 win.rowconfigure(0,weight=1)
@@ -88,6 +87,9 @@ loginFrame.grid(column=0,row=0,sticky=tk.NSEW)
 registerFrame=ttk.Frame(win)
 registerFrame.grid(column=0,row=0,sticky=tk.NSEW)
 
+HomePage = ttk.Frame(win)
+HomePage.grid(column=0, row=0, sticky=tk.NSEW)
+
 AdminPage=ttk.Frame(win)
 AdminPage.grid(column=0,row=0,sticky=tk.NSEW)
 
@@ -97,6 +99,17 @@ gamesPage.grid(column=0,row=0,sticky=tk.NSEW)
 
 addGames=ttk.Frame(win)
 addGames.grid(column=0,row=0,sticky=tk.NSEW)
+
+ttk.Button(AdminPage, text='Back', command=lambda: switcher(HomePage)).grid(column=0, row=0)
+ttk.Button(gamesPage, text='Back', command=lambda: switcher(HomePage)).grid(column=0, row=0)
+
+# Home Page
+
+ttk.Label(HomePage, text="Welcome to our Video Game").grid(column=0, row=0)
+ttk.Label(HomePage, text="_____________________________").grid(column=0, row=1)
+
+ttk.Button(HomePage, text="Admin Page", command= lambda: switcher(AdminPage)).grid(column=0, row=2)
+ttk.Button(HomePage, text="Games Page", command= lambda: switcher(gamesPage)).grid(column=1, row=2)
 
 # Add Games
 ttk.Label(addGames, text="Game Name").grid(column=0,row=0)
@@ -164,11 +177,11 @@ TreeView_Admin.heading("ScoreID",text='ScoreID')
 UpdateTable(TreeView_Admin, True)
 
 
-TreeView_Admin.place(x=10,y=10)   
+TreeView_Admin.place(x=100,y=50)   
 delete_button = tk.Button(AdminPage,text="delete", command=lambda: DeleteUser(TreeView_Admin))
-delete_button.place(x=50,y=250)
+delete_button.place(x=150,y=300)
 Switch_button = tk.Button(AdminPage,text="Switch to Games Page", command=lambda: switcher(gamesPage))
-Switch_button.place(x=120,y=250)
+Switch_button.place(x=220,y=300)
 
 # Games Page Structure
 
@@ -188,10 +201,10 @@ TreeView_Games.heading("ScoreID",text='ScoreID')
 UpdateTable(TreeView_Games, False)
 
 
-TreeView_Games.place(x=10,y=10)   
+TreeView_Games.place(x=100,y=50)   
 Add_button = tk.Button(gamesPage,text="Add Game", command=lambda: switcher(addGames))
-Add_button.place(x=50,y=250)
+Add_button.place(x=150,y=300)
 switch = tk.Button(gamesPage,text="Switch to Admin Page", command=lambda: switcher(AdminPage))
-switch.place(x=120,y=250)
+switch.place(x=220,y=300)
 
 win.mainloop()
