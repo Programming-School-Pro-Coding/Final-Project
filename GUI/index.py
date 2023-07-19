@@ -129,7 +129,7 @@ usernameEntry=ttk.Entry(loginFrame ,textvariable=username_var_login).grid(column
 # password
 ttk.Label(loginFrame,text="password").grid(column=0,row=1)
 password_var_login=tk.StringVar()
-passwordEntry=ttk.Entry(loginFrame ,textvariable=password_var_login).grid(column=1,row=1)
+passwordEntry=ttk.Entry(loginFrame ,textvariable=password_var_login, show='*').grid(column=1,row=1)
 
 # button login
 ttk.Button(loginFrame,text="Login",command=lambda :Login(username_var_login,password_var_login)).grid(column=0,row=2)
@@ -148,7 +148,7 @@ usernameEntry=ttk.Entry(registerFrame ,textvariable=username_var).grid(column=1,
 # password
 ttk.Label(registerFrame,text="password").grid(column=0,row=1)
 password_var=tk.StringVar()
-passwordEntry=ttk.Entry(registerFrame ,textvariable=password_var).grid(column=1,row=1)
+passwordEntry=ttk.Entry(registerFrame ,textvariable=password_var, show='*').grid(column=1,row=1)
 
 # button login
 ttk.Button(registerFrame,text="Register",command=lambda :register(username_var,password_var)).grid(column=0,row=2)
